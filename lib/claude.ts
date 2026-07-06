@@ -45,7 +45,10 @@ export async function processSync(
   files: { overview: string; monthlyPlan: string; weeklyPlan: string; dailyLog: string },
   today: string
 ): Promise<SyncResult> {
-  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+  const client = new Anthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY,
+    baseURL: process.env.ANTHROPIC_BASE_URL,
+  });
 
   const response = await client.messages.create({
     model: "claude-sonnet-5",
