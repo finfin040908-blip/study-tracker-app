@@ -25,6 +25,13 @@ export async function POST(request: NextRequest) {
       today
     );
 
+    console.log("Parsed result:", JSON.stringify(result, null, 2));
+
+    if (!result.updatedFiles) {
+      console.error("Missing updatedFiles in result:", result);
+      return NextResponse.json({ error: `模型返回格式错误: ${JSON.stringify(result)}` }, { status: 500 });
+    }
+
     const writePromises: Promise<void>[] = [
       writeFile(FILE_NAMES.dailyLog, result.updatedFiles.dailyLog, files.dailyLog.sha),
       writeFile(FILE_NAMES.weeklyPlan, result.updatedFiles.weeklyPlan, files.weeklyPlan.sha),
