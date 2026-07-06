@@ -51,7 +51,7 @@ export async function processSync(
   });
 
   const response = await client.messages.create({
-    model: "claude-sonnet-5",
+    model: "claude-sonnet-4-5",
     max_tokens: 4096,
     system: SYSTEM_PROMPT,
     messages: [
@@ -78,6 +78,12 @@ ${userInput}`,
       },
     ],
   });
+
+  console.log("Claude response:", JSON.stringify(response, null, 2));
+
+  if (!response.content || response.content.length === 0) {
+    throw new Error("Claude returned empty response");
+  }
 
   const text = response.content[0].type === "text" ? response.content[0].text : "{}";
   const jsonText = text.replace(/^```(?:json)?\s*/m, "").replace(/\s*```\s*$/m, "").trim();
