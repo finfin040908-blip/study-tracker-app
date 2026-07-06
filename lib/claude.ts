@@ -80,5 +80,6 @@ ${userInput}`,
   });
 
   const text = response.content[0].type === "text" ? response.content[0].text : "{}";
-  return JSON.parse(text) as SyncResult;
+  const jsonText = text.replace(/^```(?:json)?\s*/m, "").replace(/\s*```\s*$/m, "").trim();
+  return JSON.parse(jsonText) as SyncResult;
 }
