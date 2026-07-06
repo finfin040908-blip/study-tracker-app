@@ -25,18 +25,11 @@ export async function POST(request: NextRequest) {
       today
     );
 
-    const writePromises: Promise<void>[] = [
-      writeFile(FILE_NAMES.dailyLog, result.updatedFiles.dailyLog),
-      writeFile(FILE_NAMES.weeklyPlan, result.updatedFiles.weeklyPlan),
-    ];
-
+    await writeFile(FILE_NAMES.dailyLog, result.updatedFiles.dailyLog);
+    await writeFile(FILE_NAMES.weeklyPlan, result.updatedFiles.weeklyPlan);
     if (result.updatedFiles.monthlyPlan) {
-      writePromises.push(
-        writeFile(FILE_NAMES.monthlyPlan, result.updatedFiles.monthlyPlan)
-      );
+      await writeFile(FILE_NAMES.monthlyPlan, result.updatedFiles.monthlyPlan);
     }
-
-    await Promise.all(writePromises);
 
     return NextResponse.json({
       feedback: result.feedback,

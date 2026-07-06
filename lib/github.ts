@@ -36,14 +36,25 @@ export async function readFile(path: string): Promise<GitHubFile> {
 
 export async function writeFile(path: string, content: string): Promise<void> {
   const octokit = getClient();
-  const current = await readFile(path);
-  await octokit.rest.repos.createOrUpdateFileContents({
-    ...getRepo(),
-    path,
-    message: `update ${path}`,
-    content: Buffer.from(content, "utf-8").toString("base64"),
-    sha: current.sha,
-  });
+  const encoded = Buffer.from(content, "utf-8").toString("base64");
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const current = await readFile(path);
+      await octokit.rest.repos.createOrUpdateFileContents({
+        ...getRepo(),
+        path,
+        message: `update ${path}`,
+        content: encoded,
+        sha: current.sha,
+      });
+      return;
+    } catch (e: unknown) {
+      const status = (e as { status?: number }).status;
+      if (status === 409 || status === 422) continue;
+      throw e;
+    }
+  }
+  throw new Error(`写入 ${path} 失败，SHA 冲突重试三次后仍失败`);
 }
 
 export async function readAllFiles() {
