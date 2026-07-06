@@ -34,14 +34,15 @@ export async function readFile(path: string): Promise<GitHubFile> {
   return { content, sha: data.sha };
 }
 
-export async function writeFile(path: string, content: string, sha: string): Promise<void> {
+export async function writeFile(path: string, content: string): Promise<void> {
   const octokit = getClient();
+  const current = await readFile(path);
   await octokit.rest.repos.createOrUpdateFileContents({
     ...getRepo(),
     path,
     message: `update ${path}`,
     content: Buffer.from(content, "utf-8").toString("base64"),
-    sha,
+    sha: current.sha,
   });
 }
 

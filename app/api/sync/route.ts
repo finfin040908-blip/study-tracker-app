@@ -26,13 +26,13 @@ export async function POST(request: NextRequest) {
     );
 
     const writePromises: Promise<void>[] = [
-      writeFile(FILE_NAMES.dailyLog, result.updatedFiles.dailyLog, files.dailyLog.sha),
-      writeFile(FILE_NAMES.weeklyPlan, result.updatedFiles.weeklyPlan, files.weeklyPlan.sha),
+      writeFile(FILE_NAMES.dailyLog, result.updatedFiles.dailyLog),
+      writeFile(FILE_NAMES.weeklyPlan, result.updatedFiles.weeklyPlan),
     ];
 
     if (result.updatedFiles.monthlyPlan) {
       writePromises.push(
-        writeFile(FILE_NAMES.monthlyPlan, result.updatedFiles.monthlyPlan, files.monthlyPlan.sha)
+        writeFile(FILE_NAMES.monthlyPlan, result.updatedFiles.monthlyPlan)
       );
     }
 
